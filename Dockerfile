@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-extldflags "-static"'
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o otel-example -a -ldflags '-extldflags "-static"'
 
 FROM scratch
 COPY --from=build-env /usr/src/app/otel-example /otel-example
