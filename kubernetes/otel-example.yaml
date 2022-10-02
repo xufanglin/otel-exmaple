@@ -1,0 +1,46 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-example
+  labels:
+    app: otel-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-example
+  template:
+    metadata:
+      labels:
+        app: otel-example
+    spec:
+      containers:
+      - name: otel-example
+        image: ${IMAGE}
+        ports:
+        - name: web
+          containerPort: 4000
+        env:
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "otel-trace-collector.aws-otel-eks:4317"
+        - name: RESOURCE_TYPE
+          value: "EC2"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-example
+  labels:
+    app: otel-example
+  annotations:
+    scrape: "true"
+spec:
+  ports:
+  - name: web
+    port: 4000
+    targetPort: 4000
+    protocol: TCP
+  selector:
+    app: otel-example
