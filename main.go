@@ -54,12 +54,10 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 
 func errHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusServiceUnavailable)
-	w.Write([]byte("Service Unavailable"))
 }
 
 func notfoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
-	w.Write([]byte("Page not found"))
 }
 
 // Fibonacci returns the n-th fibonacci number.
@@ -124,7 +122,7 @@ func NewResource(ctx context.Context) *resource.Resource {
 	}
 }
 
-// InitOTELProvider 初始化TraceProvider和MeterProvider，返回Meter和Trace的关闭函数
+// InitOTELProvider 初始化TraceProvider，返回Tracer的关闭函数
 func InitOTELProvider(ctx context.Context) (traceStop func(context.Context) error) {
 
 	ep := os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
@@ -134,7 +132,7 @@ func InitOTELProvider(ctx context.Context) (traceStop func(context.Context) erro
 
 	res := NewResource(ctx)
 
-	// 初始化TracerProvider
+	// 初始化TracerProvider，使用grpc与collector通讯
 	traceExporter, err := otlptracegrpc.New(ctx, otlptracegrpc.WithInsecure(), otlptracegrpc.WithEndpoint(OTLP_ENDPOINT_GRPC))
 	if err != nil {
 		log.Fatalf("%s: %v", "failed to create trace exporter", err)
