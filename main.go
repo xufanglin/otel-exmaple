@@ -38,7 +38,7 @@ func main() {
 			log.Fatal(err)
 		}
 	}()
-	// otelhttp.NewHandler在
+	// otelhttp.NewHandler拦截请求路由，为处理函数增加自动生成traces的能力
 	http.Handle("/hello", otelhttp.NewHandler(http.HandlerFunc(helloHandler), "hello"))
 	http.Handle("/err", otelhttp.NewHandler(http.HandlerFunc(errHandler), "err"))
 	http.Handle("/notfound", otelhttp.NewHandler(http.HandlerFunc(notfoundHandler), "notfound"))
